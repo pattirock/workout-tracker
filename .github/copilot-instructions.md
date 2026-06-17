@@ -62,3 +62,10 @@
 - **Toda lógica de negocio nueva debe incluir test obligatorio en la misma capa antes de considerar el cambio completo.**
 - Si se añade lógica nueva, añade o ajusta tests de la misma capa.
 - Mantén nombres y estructura coherentes con los ya existentes.
+
+## Flujo de ramas y PR
+
+- No trabajes directamente sobre `main`.
+- Toda tarea debe comenzar creando una rama desde `main`.
+- Toda integración debe hacerse mediante **Pull Request** desde rama de trabajo hacia `main`.
+- Si accidentalmente se hace push directo a `main`, se debe revertir en `main` y re-publicar el cambio desde una rama con PR.
