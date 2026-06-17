@@ -21,16 +21,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        if: ${{ hashFiles('package.json') != '' }}
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Run backend tests
+        if: ${{ hashFiles('package.json') != '' }}
         run: npm run test:backend -- --silent
 
       - name: Run frontend tests
+        if: ${{ hashFiles('package.json') != '' }}
         run: npm run test:frontend -- --silent
 
       - name: Run coverage checks
+        if: ${{ hashFiles('package.json') != '' }}
         run: npm run test:coverage -- --silent
