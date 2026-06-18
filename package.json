@@ -9,7 +9,7 @@
     "test:coverage": "jest --coverage --runInBand",
     "build:frontend": "webpack --config frontend/webpack.config.js --mode production",
     "start:frontend": "webpack serve --config frontend/webpack.config.js --mode development --open",
-    "start:backend": "ts-node backend/server.ts",
+    "start:backend": "NODE_OPTIONS='--require ./backend/load-env.js' ts-node backend/server.ts",
     "start": "npm run start:backend & npm run start:frontend",
     "bundle:report": "node frontend/scripts/bundle-report.js",
     "frontend:check": "npm run build:frontend && npm run bundle:report"
@@ -17,6 +17,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.52.1",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "express": "^4.21.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -35,6 +36,7 @@
     "style-loader": "^4.0.0",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.6.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "webpack": "^5.107.2",
     "webpack-cli": "^7.0.3",

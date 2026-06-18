@@ -8,6 +8,7 @@
  * - Centralizes authentication and error handling
  * 
  * Requires HEVY_API_KEY environment variable to be set.
+ * Automatically loaded from .env.local via NODE_OPTIONS in npm script.
  * @see .env.local or .env.example for configuration
  */
 
