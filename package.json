@@ -1,0 +1,48 @@
+{
+  "name": "workout-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "jest --runInBand",
+    "test:backend": "jest --runInBand backend",
+    "test:frontend": "jest --runInBand frontend/src",
+    "test:coverage": "jest --coverage --runInBand",
+    "build:frontend": "webpack --config frontend/webpack.config.js --mode production",
+    "start:frontend": "webpack serve --config frontend/webpack.config.js --mode development --open",
+    "start:backend": "NODE_OPTIONS='--require ./backend/load-env.js' ts-node backend/server.ts",
+    "start": "npm run start:backend & npm run start:frontend",
+    "bundle:report": "node frontend/scripts/bundle-report.js",
+    "frontend:check": "npm run build:frontend && npm run bundle:report"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.52.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.21.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.1",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/react": "^18.3.4",
+    "@types/react-dom": "^18.3.0",
+    "css-loader": "^7.1.4",
+    "html-webpack-plugin": "^5.6.7",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "style-loader": "^4.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-loader": "^9.6.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "webpack": "^5.107.2",
+    "webpack-cli": "^7.0.3",
+    "webpack-dev-server": "^5.2.5"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  }
+}
