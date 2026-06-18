@@ -38,6 +38,7 @@ describe('backend/server', () => {
     jest.resetModules();
     jest.clearAllMocks();
 
+    // Set environment variable before loading module
     if (apiKey === undefined) {
       delete process.env.HEVY_API_KEY;
     } else {
@@ -77,16 +78,29 @@ describe('backend/server', () => {
     expect(expressMock.json).toHaveBeenCalledTimes(1);
     expect(appMock.use).toHaveBeenCalledWith('cors-middleware');
     expect(appMock.use).toHaveBeenCalledWith('json-middleware');
-    expect(hevyRepoCtorMock).toHaveBeenCalledWith('test-api-key');
+    // HevyApiRepository now reads from environment variable, no longer passed as argument
+    expect(hevyRepoCtorMock).toHaveBeenCalledWith();
     expect(appMock.get).toHaveBeenCalledWith('/api/workouts', expect.any(Function));
     expect(routeHandler).toBeDefined();
   });
 
-  it('uses fallback API key when HEVY_API_KEY is empty', () => {
-    const { createApp } = bootstrap('');
+  it('creates HevyApiRepository when HEVY_API_KEY environment variable is set', () => {
+    const { createApp } = bootstrap('test-key-123');
     createApp();
 
-    expect(hevyRepoCtorMock).toHaveBeenCalledWith('TU_API_KEY_AQUI');
+    // Constructor called with no arguments; reads from environment
+    expect(hevyRepoCtorMock).toHaveBeenCalledWith();
+  });
+
+  it('throws error when HEVY_API_KEY is not set and no repository provided', () => {
+    const { createApp } = bootstrap(undefined);
+
+    // When HEVY_API_KEY is not set and HevyApiRepository constructor throws
+    hevyRepoCtorMock.mockImplementationOnce(() => {
+      throw new Error('HEVY_API_KEY environment variable is not set');
+    });
+
+    expect(() => createApp()).toThrow('HEVY_API_KEY environment variable is not set');
   });
 
   it('uses injected repository instead of creating HevyApiRepository', async () => {

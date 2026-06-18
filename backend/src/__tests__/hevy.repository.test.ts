@@ -5,6 +5,7 @@
  * - Correct API calls with authentication
  * - Proper error handling
  * - Data transformation from API to domain format
+ * - Environment variable configuration
  * 
  * @see {@link HevyApiRepository}
  */
@@ -20,8 +21,42 @@ describe('HevyApiRepository', () => {
   let repository: HevyApiRepository;
 
   beforeEach(() => {
-    repository = new HevyApiRepository(mockApiKey);
+    // Set environment variable before creating repository
+    process.env.HEVY_API_KEY = mockApiKey;
+    repository = new HevyApiRepository();
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    // Clean up environment variable
+    delete process.env.HEVY_API_KEY;
+  });
+
+  describe('constructor', () => {
+    it('should initialize with API key from environment variable', () => {
+      // Arrange & Act: Environment variable set in beforeEach
+      expect(repository).toBeInstanceOf(HevyApiRepository);
+    });
+
+    it('should throw error when HEVY_API_KEY environment variable is not set', () => {
+      // Arrange: Remove environment variable
+      delete process.env.HEVY_API_KEY;
+
+      // Act & Assert: Verify error is thrown with helpful message
+      expect(() => new HevyApiRepository()).toThrow(
+        'HEVY_API_KEY environment variable is not set'
+      );
+    });
+
+    it('should throw error message containing documentation link', () => {
+      // Arrange: Remove environment variable
+      delete process.env.HEVY_API_KEY;
+
+      // Act & Assert: Verify error message includes setup instructions
+      expect(() => new HevyApiRepository()).toThrow(
+        'Get your key from: https://app.hevyapp.com/settings/api'
+      );
+    });
   });
 
   describe('getRecentWorkouts', () => {
@@ -45,7 +80,7 @@ describe('HevyApiRepository', () => {
       // Act: Call the repository method
       const result = await repository.getRecentWorkouts();
 
-      // Assert: Verify fetch was called correctly
+      // Assert: Verify fetch was called correctly with environment variable API key
       expect(global.fetch).toHaveBeenCalledWith(
         'https://api.hevyapp.com/v1/workouts',
         {
@@ -97,17 +132,6 @@ describe('HevyApiRepository', () => {
 
       // Assert: Verify empty array is returned
       expect(result).toEqual([]);
-    });
-  });
-
-  describe('constructor', () => {
-    it('should initialize with provided API key', () => {
-      // Arrange & Act
-      const customApiKey = 'custom-key-xyz';
-      const customRepository = new HevyApiRepository(customApiKey);
-
-      // Assert: Verify repository was created (verified via successful fetch calls)
-      expect(customRepository).toBeInstanceOf(HevyApiRepository);
     });
   });
 });

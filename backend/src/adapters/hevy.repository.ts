@@ -8,13 +8,15 @@
  * Hevy API contract, handling authentication, error cases, and
  * data transformation.
  * 
+ * Requires HEVY_API_KEY environment variable to be set.
+ * Get your API key from: https://app.hevyapp.com/settings/api
+ * 
  * @layer Adapters (Driven/Secondary)
  * @architecture Hexagonal Architecture
  * @implements {WorkoutRepository}
  * 
  * @example
- * const apiKey = process.env.HEVY_API_KEY;
- * const repository = new HevyApiRepository(apiKey);
+ * const repository = new HevyApiRepository();
  * const workouts = await repository.getRecentWorkouts();
  */
 
@@ -39,20 +41,33 @@ import { Workout } from '../core/domain/workout.types';
 export class HevyApiRepository implements WorkoutRepository {
   /** @private Base URL for Hevy API endpoints */
   private readonly baseUrl = 'https://api.hevyapp.com';
+  
+  /** @private API key from environment variable */
+  private readonly apiKey: string;
 
   /**
-   * Initialize the Hevy API repository with authentication credentials.
+   * Initialize the Hevy API repository with authentication credentials
+   * from environment variables.
    * 
-   * @param {string} apiKey - API key for Hevy authentication
-   *                          Get from: https://app.hevyapp.com/settings/api
-   * 
-   * @throws {Error} Should be thrown by caller if apiKey is not provided
+   * @throws {Error} If HEVY_API_KEY environment variable is not set
    * 
    * @example
-   * const apiKey = process.env.HEVY_API_KEY || 'fallback_key';
-   * const repo = new HevyApiRepository(apiKey);
+   * // Requires HEVY_API_KEY in .env.local
+   * const repo = new HevyApiRepository();
    */
-  constructor(private readonly apiKey: string) {}
+  constructor() {
+    const apiKey = process.env.HEVY_API_KEY;
+    
+    if (!apiKey) {
+      throw new Error(
+        'HEVY_API_KEY environment variable is not set. ' +
+        'Please add it to .env.local or your environment. ' +
+        'Get your key from: https://app.hevyapp.com/settings/api'
+      );
+    }
+    
+    this.apiKey = apiKey;
+  }
 
   /**
    * Fetches recent workouts from Hevy API.
